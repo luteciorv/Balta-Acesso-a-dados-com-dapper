@@ -4,22 +4,21 @@ using Blog.Repositories;
 using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
 
-const string CONNECTION_STRING = 
+const string CONNECTION_STRING = "Server=localhost,1433;Database=Blog;User ID=sa;Password=Teste@123;Trusted_Connection=False;TrustServerCertificate=True;";
 
 using var connection = new SqlConnection(CONNECTION_STRING);
 
-//CreateUser(connection);
-//UpdateUser(connection);
-//DeleteUser(connection);
-ReadUsers(connection);
+//ReadUsers(connection);
+ReadRoles(connection);
+
 
 static void ReadUsers(SqlConnection connection)
 {
-    var repository = new UserRepository();
-    var users = repository.Get(connection);
+    var repository = new UserRepository(connection);
+    var users = repository.Get();
 
     foreach (var user in users)
-        Console.WriteLine("");
+        Console.WriteLine(user.Name);
 }
 
 static void ReadUser(SqlConnection connection)
@@ -28,43 +27,11 @@ static void ReadUser(SqlConnection connection)
     Console.WriteLine(user.Name);
 }
 
-static void CreateUser(SqlConnection connection)
+static void ReadRoles(SqlConnection connection)
 {
-    var user = new User
-    {
-        Name = "Equipe Balta IO",
-        PasswordHash = "Hash",
-        Bio = "Equipe Balta IO",
-        Email = "equipe@localhost.com",
-        Image = "https://...",
-        Slug = "balta-io"
-    };
+    var repository = new RoleRepository(connection);
+    var roles = repository.Get();
 
-    connection.Insert(user);
-    Console.WriteLine("Usuário cadastrado com sucesso");
-}
-
-static void UpdateUser(SqlConnection connection)
-{
-    var user = new User
-    {
-        Id = 3,
-        Name = "Equipe | Balta IO",
-        PasswordHash = "Hash",
-        Bio = "Equipe Balta.IO",
-        Email = "equipe@localhost.com",
-        Image = "https://...",
-        Slug = "equipe-balta-io"
-    };
-
-    connection.Update(user);
-    Console.WriteLine("Usuário atualizado com sucesso");
-}
-
-static void DeleteUser(SqlConnection connection)
-{
-    var user = connection.Get<User>(3);
-    connection.Delete(user);
-
-    Console.WriteLine("O usuário foi apagado com sucesso");
+    foreach(var role in roles)
+        Console.WriteLine(role.Name);
 }
