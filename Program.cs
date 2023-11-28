@@ -1,9 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Blog.Models;
+using Blog.Repositories;
 using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
 
-const string CONNECTION_STRING = "Server=localhost,1433;Database=Blog;User ID=sa;Password=Teste@123;Trusted_Connection=False;TrustServerCertificate=True;";
+const string CONNECTION_STRING = 
 
 using var connection = new SqlConnection(CONNECTION_STRING);
 
@@ -14,10 +15,11 @@ ReadUsers(connection);
 
 static void ReadUsers(SqlConnection connection)
 {
-    var users = connection.GetAll<User>();
+    var repository = new UserRepository();
+    var users = repository.Get(connection);
 
-    foreach(var user in users)
-        Console.WriteLine(user.Name);
+    foreach (var user in users)
+        Console.WriteLine("");
 }
 
 static void ReadUser(SqlConnection connection)
@@ -65,4 +67,4 @@ static void DeleteUser(SqlConnection connection)
     connection.Delete(user);
 
     Console.WriteLine("O usuário foi apagado com sucesso");
-}                                           
+}
