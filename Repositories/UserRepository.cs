@@ -19,7 +19,7 @@ public class UserRepository(SqlConnection connection) : Repository<User>(connect
 
         var users = new List<User>();
 
-        var items = _connection.Query<User, Role, User>(query, (user, role) =>
+        var items = Connection.Query<User, Role, User>(query, (user, role) =>
         {
             var usr = users.FirstOrDefault(u => u.Id == user.Id);
             if (usr is null)
@@ -37,5 +37,26 @@ public class UserRepository(SqlConnection connection) : Repository<User>(connect
         }, splitOn: "Id");
 
         return users;
+    }
+
+    public void AssignToRole(int userId, int roleId)
+    {
+        var query = @"
+                    INSERT INTO 
+                        [UserRole] 
+                    VALUES(
+                        @userId, 
+                        @roleId
+                    )";
+
+        var parameters = new { userId, roleId };
+
+        var transaction = Connection.BeginTransaction();
+        var rowsAffected = Connection.Execute(query, parameters, transaction);
+
+        if (rowsAffected == 0)
+            throw new Exception($"Não foi possível associar o usuário de id {userId} ao perfil de id {roleId}");
+
+        transaction.Commit();
     }
 }
