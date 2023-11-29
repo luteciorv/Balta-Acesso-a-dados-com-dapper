@@ -6,7 +6,7 @@ namespace Blog.Repositories;
 
 public class Repository<TModel>(SqlConnection connection) where TModel : class
 {
-    private readonly SqlConnection _connection = connection;
+    protected readonly SqlConnection _connection = connection;
 
     public IEnumerable<TModel> Get()
        => _connection.GetAll<TModel>();

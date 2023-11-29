@@ -14,12 +14,19 @@ ReadTags(connection);
 
 static void ReadUsers(SqlConnection connection)
 {
-    var repository = new Repository<User>(connection);
-    var users = repository.Get();
+    var repository = new UserRepository(connection);
+    var users = repository.GetWithRoles();
 
-    Console.WriteLine("Usuários:");
+    Console.WriteLine("\nUsuários:");
     foreach (var user in users)
+    {
         Console.WriteLine("- " + user.Name);
+
+        foreach(var role in user.Roles)
+            Console.WriteLine("..Role: " + role.Name);
+
+        Console.WriteLine();
+    }
 }
 
 static void ReadUser(SqlConnection connection)
@@ -36,6 +43,8 @@ static void ReadRoles(SqlConnection connection)
     Console.WriteLine("Roles:");
     foreach (var role in roles)
         Console.WriteLine("- " + role.Name);
+
+    Console.WriteLine();
 }
 
 static void ReadTags(SqlConnection connection)
@@ -43,6 +52,9 @@ static void ReadTags(SqlConnection connection)
     var repository = new Repository<Tag>(connection);
     var tags = repository.Get();
 
+    Console.WriteLine("Tags:");
     foreach (var tag in tags)
         Console.WriteLine(tag.Name);
+
+    Console.WriteLine();
 }
